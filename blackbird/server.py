@@ -1,6 +1,7 @@
 import os
 import psycopg2 as psycopg2
 import simplejson as json
+import urlparse # import urllib.parse for python 3+
 
 try:
   from SimpleHTTPServer import SimpleHTTPRequestHandler as Handler
@@ -17,22 +18,38 @@ os.chdir('static')
 
 httpd = Server(("", PORT), Handler)
 
-
 def connectToDb():
     db_url = ""
     if 'VCAP_SERVICES' in os.environ:
         data = json.loads(os.environ['VCAP_SERVICES'])
         db_url = data["elephantsql"][0]["credentials"]["uri"]
+        print ("bluemix")
         print (db_url)
     if db_url is "":
         with open('VCAP_SERVICES.json') as data_file:
             data = json.load(data_file)
             db_url = data["VCAP_SERVICES"]["elephantsql"][0]["credentials"]["uri"]
+            print ("local")
             print (db_url)
+
+    result = urlparse.urlparse(db_url)
+    username = result.username
+    password = result.password
+    database = result.path[1:]
+    hostname = result.hostname
     try:
-        conn = psycopg2.connect(db_url)
+        conn = psycopg2.connect(
+        database = database,
+        user = username,
+        password = password,
+        host = hostname
+        )
         print "connected"
-    except:
+    except Exception as ex:
+        print "general exception:   ", ex.message
+    except psycopg2.Error as e:
+        print "psycopg2 error code: ", e.pgcode
+        print "psycopg2 error msg: ", e.pgerror  
         print "I am unable to connect to the database"
     try:
         cur = conn.cursor()
