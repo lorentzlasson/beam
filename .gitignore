@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 .DS_Store
+=======
+/blackbird/static/VCAP_SERVICES.json
+/blackbird/.DS_Store
+/.DS_Store
+blackbird/static/.DS_Store
+>>>>>>> 37eccfa15aa13c6d9c040b218a589ec4ad71a476
