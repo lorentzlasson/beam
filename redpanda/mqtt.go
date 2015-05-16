@@ -6,10 +6,9 @@ import (
 	mqtt "git.eclipse.org/gitroot/paho/org.eclipse.paho.mqtt.golang.git"
 	"github.com/lorentzlasson/beam/redpanda/util/vcapservices"
 	"log"
-	"os"
 )
 
-var client *mqtt.MqttClient
+var client *mqtt.Client
 
 func startSubscriptions() {
 	credentials := vcapservices.GetCredentials("iotf-service")
@@ -20,27 +19,21 @@ func startSubscriptions() {
 	opts := mqtt.NewClientOptions().AddBroker(broker)
 	opts.SetUsername(credentials["apiKey"])
 	opts.SetPassword(credentials["apiToken"])
-	opts.SetClientId(clientId)
+	opts.SetClientID(clientId)
 
 	log.Printf("Connecting to mqtt broker: %s", broker)
 
 	client = mqtt.NewClient(opts)
-	_, err := client.Start()
-	if err != nil {
-		panic(err)
-	}
-	// log.Println("Connected to mqtt broker")
 
-	topic, _ := mqtt.NewTopicFilter("iot-2/type/app/id/+/evt/new_beam/fmt/json", 0)
-	if receipt, err := client.StartSubscription(messageReceived, topic); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	} else {
-		<-receipt
-	}
+	token := client.Connect()
+	token.Wait()
+	token = client.Subscribe("iot-2/type/app/id/+/evt/new_beam/fmt/json", 0, messageReceived)
+	token.Wait()
+
+	// log.Println("Connected to mqtt broker")
 }
 
-var messageReceived mqtt.MessageHandler = func(client *mqtt.MqttClient, msg mqtt.Message) {
+var messageReceived mqtt.MessageHandler = func(client *mqtt.Client, msg mqtt.Message) {
 	log.Printf("TOPIC: %s\n", msg.Topic())
 	log.Printf("MSG: %s\n", msg.Payload())
 	beacon := &Beacon{}
