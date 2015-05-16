@@ -1,0 +1,37 @@
+{
+	"ImportPath": "github.com/lorentzlasson/beam/redpanda",
+	"GoVersion": "go1.4",
+	"Deps": [
+		{
+			"ImportPath": "code.google.com/p/go.net/websocket",
+			"Comment": "null-240",
+			"Rev": "937a34c9de13c766c814510f76bca091dee06028"
+		},
+		{
+			"ImportPath": "git.eclipse.org/gitroot/paho/org.eclipse.paho.mqtt.golang.git",
+			"Rev": "3e58ec10bf2da9ef3fc639d12a0eb2e3596c2df7"
+		},
+		{
+			"ImportPath": "github.com/Pallinder/go-randomdata",
+			"Rev": "7ec707d9bd7e0ea33f0e6b10a2e39e36003965b6"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-community/go-cfenv",
+			"Comment": "v1.11",
+			"Rev": "d09cf526a66903121cc1387caa5951b9dcb35642"
+		},
+		{
+			"ImportPath": "github.com/eaigner/jet",
+			"Rev": "ae59b2cccfe3fa2b9fea87ccc0fa3d8b7d89bd84"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "go1.0-cutoff-47-g93e9980",
+			"Rev": "93e9980741c9e593411b94e07d5bad8cfb4809db"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "442e588f213303bec7936deba67901f8fc8f18b1"
+		}
+	]
+}

@@ -1,0 +1,7 @@
+applications:
+- disk_quota: 1024M
+  buildpack: go_buildpack
+  host: redpanda
+  name: redpanda
+  path: .
+  memory: 64M
