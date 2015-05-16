@@ -5,43 +5,42 @@ import urlparse # import urllib.parse for python 3+
 from flask import Flask, jsonify
 app = Flask(__name__)
 environment = ""
-# try:
-#   from SimpleHTTPServer import SimpleHTTPRequestHandler as Handler
-#   from SocketServer import TCPServer as Server
-# except ImportError:
-#   from http.server import SimpleHTTPRequestHandler as Handler
-#   from http.server import HTTPServer as Server
 
+# INIT #
 if 'VCAP_SERVICES' in os.environ:
     environment = "bluemix"
 else:
     environment = "local"    
-users = []
-
-@app.route('/hej')
-def index():
-    connectToDb();
-    return jsonify({'users': users})
-
-
 # Read port selected by the cloud for our application
 PORT = int(os.getenv('VCAP_APP_PORT', 8000))
-# # Change current directory to avoid exposure of control files
-# os.chdir('static')
-# httpd = Server(("", PORT), Handler)
 
+# SQL #
+def getAllFromUser():
+     return "SELECT * from \"user\""   
+def getAllFromBeacon():
+     return "SELECT * from \"beacon\""   
 
+# API #
+@app.route('/getUsers')
+def APIgetUsers():
+    conn = connectToDb()
+    data = getDataFromDB(conn, getAllFromUser)
+    return jsonify({'users': data})
+@app.route('/getBeacons')
+def APIgetBeacons():
+    conn = connectToDb()
+    data = getDataFromDB(conn, getAllFromBeacon)
+    return jsonify({'beacons': data})
+
+# METHODS #
 def connectToDb():
-    db_url = ""
-    if 'VCAP_SERVICES' in os.environ:
+    if environment=='bluemix':
         data = json.loads(os.environ['VCAP_SERVICES'])
         db_url = data["elephantsql"][0]["credentials"]["uri"]
-        print (db_url)
-    if db_url is "":
+    elif environment=='local':
         with open('VCAP_SERVICES.json') as data_file:
             data = json.load(data_file)
             db_url = data["VCAP_SERVICES"]["elephantsql"][0]["credentials"]["uri"]
-            print (db_url)
     result = urlparse.urlparse(db_url)
     username = result.username
     password = result.password
@@ -55,23 +54,30 @@ def connectToDb():
         host = hostname
         )
         print "connected"
+        return conn
     except Exception as ex:
         print "general exception:   ", ex.message
     except psycopg2.Error as e:
         print "psycopg2 error code: ", e.pgcode
         print "psycopg2 error msg: ", e.pgerror  
         print "Unable to connect to the database"
+
+def getDataFromDB(conn, sql):
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * from \"user\"")
+        cur.execute(sql())
         rows = cur.fetchall()
-        print "\nShow me the databases:\n"
+        dataRows = []
         for row in rows:
-            print "   ", row[0]
-            users.append(row[0])
+            dataColumns = []
+            for x in xrange(0,len(row)):
+                dataColumns.append(row[x])
+            dataRows.append(dataColumns)
+        return dataRows
     except:
         print "Can't display result"
 
+# RUN APPLICATION #
 
 if __name__ == '__main__':
     print environment
@@ -79,13 +85,3 @@ if __name__ == '__main__':
         app.run(debug=True)
     if environment=='bluemix':
         app.run(host='0.0.0.0', port=PORT)
-
-# try:
-#   print("Start serving at port %i" % PORT)
-#   connectToDb()
-#   httpd.serve_forever()
-# except KeyboardInterrupt:
-#   pass
-# httpd.server_close()
-
-
