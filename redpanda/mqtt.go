@@ -45,5 +45,5 @@ var messageReceived mqtt.MessageHandler = func(client *mqtt.MqttClient, msg mqtt
 	log.Printf("MSG: %s\n", msg.Payload())
 	beacon := &Beacon{}
 	json.Unmarshal(msg.Payload(), &beacon)
-	storeBeacon(beacon)
+	beacon.add()
 }
