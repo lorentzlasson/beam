@@ -1,2 +1,5 @@
 # About
-Go backend project
+Beam backend application
+
+# Deployed at
+http://redpanda.mybluemix.net/
