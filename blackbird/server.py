@@ -3,7 +3,8 @@ import psycopg2 as psycopg2
 import simplejson as json
 import urlparse # import urllib.parse for python 3+
 from flask import Flask, jsonify
-app = Flask(__name__)
+from psycopg2.extras import RealDictCursor
+app = Flask(__name__, static_url_path = "")
 environment = ""
 
 # INIT #
@@ -21,16 +22,19 @@ def getAllFromBeacon():
      return "SELECT * from \"beacon\""   
 
 # API #
+
 @app.route('/getUsers')
 def APIgetUsers():
     conn = connectToDb()
     data = getDataFromDB(conn, getAllFromUser)
-    return jsonify({'users': data})
+    # return jsonify({'users': data})
+    return data
 @app.route('/getBeacons')
 def APIgetBeacons():
     conn = connectToDb()
     data = getDataFromDB(conn, getAllFromBeacon)
-    return jsonify({'beacons': data})
+    # return jsonify({'beacons': data})
+    return data
 
 # METHODS #
 def connectToDb():
@@ -64,16 +68,13 @@ def connectToDb():
 
 def getDataFromDB(conn, sql):
     try:
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute(sql())
+        colnames = [desc[0] for desc in cur.description]
+        print colnames
+        return json.dumps(cur.fetchall(), indent=2)
         rows = cur.fetchall()
-        dataRows = []
-        for row in rows:
-            dataColumns = []
-            for x in xrange(0,len(row)):
-                dataColumns.append(row[x])
-            dataRows.append(dataColumns)
-        return dataRows
+        return rows
     except:
         print "Can't display result"
 
