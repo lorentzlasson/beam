@@ -2,8 +2,10 @@ import os
 import psycopg2 as psycopg2
 import simplejson as json
 import urlparse # import urllib.parse for python 3+
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request, redirect, url_for, send_from_directory
 from psycopg2.extras import RealDictCursor
+# import pyodbc
+
 app = Flask(__name__, static_url_path = "")
 environment = ""
 
@@ -22,6 +24,19 @@ def getAllFromBeacon():
      return "SELECT * from \"beacon\""   
 
 # API #
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
+@app.route('/user/<username>')
+def show_user_profile(username):
+    # show the user profile for that user
+    return 'User %s' % username
+
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    # show the post with the given id, the id is an integer
+    return 'Post %d' % post_id
 
 @app.route('/getUsers')
 def APIgetUsers():

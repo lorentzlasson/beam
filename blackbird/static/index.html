@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>beam admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-<script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
-<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+    <title>beam admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+
+    <!-- JS -->
+    <script type="text/javascript" src="js/controller.js"></script>
+    <script type="text/javascript" src="js/ajax.js"></script>
+
 </head>
 <body>
     <div class="navbar">
@@ -17,9 +22,9 @@
     <div id="main" class="container">
 
         <table class="table table-striped">
-    <tr><td><b>Beacons</b></td><td><b>Options</b></td></tr>
-    <!-- ko foreach: users -->
-    <tr>
+            <tr><td><b>Beacons</b></td><td><b>Options</b></td></tr>
+            <!-- ko foreach: users -->
+            <tr>
 <!--         <td>
             <span data-bind="visible: done" class="label label-success">Done</span>
             <span data-bind="visible: !done()" class="label label-important">In Progress</span>
@@ -40,67 +45,12 @@
 </table>
 <button data-bind="click: beginAdd" class="btn">Add Beam</button>
 
-    </div>
-    <script type="text/javascript">
+</div>
 
-        function BeaconsViewModel() {
-        var self = this;
-        self.usersURI = 'getUsers';
-        self.beaconsURI = 'getBeacons';
-        self.users = ko.observableArray();
+<script type="text/javascript">
 
-        self.ajax = function(uri, method, data) {
-            var request = {
-                url: uri,
-                type: method,
-                contentType: "application/json",
-                accepts: "application/json",
-                cache: false,
-                dataType: 'json',
-                data: JSON.stringify(data),
-                // beforeSend: function (xhr) {
-                //     xhr.setRequestHeader("Authorization", 
-                //         "Basic " + btoa(self.username + ":" + self.password));
-                // },
-                error: function(jqXHR) {
-                    console.log("ajax error " + jqXHR.status);
-                }
-            };
-            return $.ajax(request);
-        }
+ ko.applyBindings(new BeaconsViewModel(), $('#main')[0]);
 
-        self.beginAdd = function() {
-            alert("Add");
-        }
-        self.beginEdit = function(beacon) {
-            alert("Edit: " + beacon.id());
-        }
-        self.remove = function(beacon) {
-            alert("Remove: " + beacon.id());
-        }
-        // self.markInProgress = function(beacon) {
-        //     beacon.done(false);
-        // }
-        // self.markDone = function(task) {
-        //     task.done(true);
-        // }
-
-        self.ajax(self.beaconsURI, 'GET').done(function(data) {
-            for (var i = 0; i < data.length; i++) {
-                self.users.push({
-                    // uri: ko.observable(data.users[i].uri),
-                    latitude: ko.observable(data[i].latitude),
-                    userId: ko.observable(data[i].userId),
-                    id: ko.observable(data[i].id),
-                    longitude: ko.observable(data[i].longitude),
-                    time: ko.observable(data[i].time)
-                });
-            }
-        });
-    }
-
-    ko.applyBindings(new BeaconsViewModel(), $('#main')[0]);
-
-    </script>
+</script>
 </body>
 </html>
