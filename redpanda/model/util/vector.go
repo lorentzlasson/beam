@@ -1,4 +1,5 @@
 package main
+
 import "math"
 
 type Vector struct {
@@ -9,7 +10,7 @@ type Vector struct {
 func (v Vector) size() (vectorSize float64) {
 	x2 := math.Pow(v.x, 2)
 	y2 := math.Pow(v.y, 2)
-	vectorSize = math.Pow(x2 + y2, 0.5)
+	vectorSize = math.Pow(x2+y2, 0.5)
 	return
 }
 
@@ -20,8 +21,8 @@ func (v1 *Vector) add(v2 *Vector) (result Vector) {
 }
 
 func (v1 *Vector) subtract(v2 Vector) (result Vector) {
-	var negV2 = v2.multiply(-1);
-	result = v1.add(&negV2);
+	var negV2 = v2.multiply(-1)
+	result = v1.add(&negV2)
 	return
 }
 
