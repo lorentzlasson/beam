@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func getHostAndPort() (host string, port string) {
 }
 
 func handleDefault(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World %s!\n", appId)
+	fmt.Fprintf(w, "Hello World %s!\n", config.appId)
 
 	fmt.Fprintln(w, "\n<><> Users <><>")
 	for _, user := range users() {
@@ -45,7 +45,7 @@ func startServer() {
 	host, port := getHostAndPort()
 	http.HandleFunc("/", handleDefault)
 	log.Printf("Starting app on %+v:%+v\n", host, port)
-	startupTimeMillis := (time.Now().UnixNano() - startupStart) / int64(time.Millisecond)
+	startupTimeMillis := (time.Now().UnixNano() - config.startupStart) / int64(time.Millisecond)
 	log.Printf("Startup time in millis: %d", startupTimeMillis)
 	http.ListenAndServe(host+":"+port, nil)
 }

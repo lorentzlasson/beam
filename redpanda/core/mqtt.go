@@ -1,9 +1,10 @@
-package main
+package core
 
 import (
 	"encoding/json"
 	"fmt"
 	mqtt "git.eclipse.org/gitroot/paho/org.eclipse.paho.mqtt.golang.git"
+	"github.com/lorentzlasson/beam/redpanda/model"
 	"github.com/lorentzlasson/beam/redpanda/util/vcapservices"
 	"log"
 )
@@ -11,14 +12,14 @@ import (
 var client *mqtt.Client
 
 func startSubscriptions() {
-	credentials := vcapservices.GetCredentials("iotf-service")
+	creds := vcapservices.GetCredentials("iotf-service")
 
-	broker := fmt.Sprintf("tcp://%s:%s", credentials["mqtt_host"], credentials["mqtt_u_port"])
-	clientId := fmt.Sprintf("a:%s:%s%s", credentials["org"], "redpanda-", appId) // appId to prevent iotf collision
+	broker := fmt.Sprintf("tcp://%s:%s", creds["mqtt_host"], creds["mqtt_u_port"])
+	clientId := fmt.Sprintf("a:%s:%s%s", creds["org"], "redpanda-", config.appId) // appId to prevent iotf collision
 
 	opts := mqtt.NewClientOptions().AddBroker(broker)
-	opts.SetUsername(credentials["apiKey"])
-	opts.SetPassword(credentials["apiToken"])
+	opts.SetUsername(creds["apiKey"])
+	opts.SetPassword(creds["apiToken"])
 	opts.SetClientID(clientId)
 
 	log.Printf("Connecting to mqtt broker: %s", broker)
@@ -36,7 +37,7 @@ func startSubscriptions() {
 var messageReceived mqtt.MessageHandler = func(client *mqtt.Client, msg mqtt.Message) {
 	log.Printf("TOPIC: %s\n", msg.Topic())
 	log.Printf("MSG: %s\n", msg.Payload())
-	beacon := &Beacon{}
+	beacon := &model.Beacon{}
 	json.Unmarshal(msg.Payload(), &beacon)
-	beacon.add()
+	storeBeacon(beacon)
 }

@@ -1,4 +1,4 @@
-package main
+package model
 
 import (
 	"time"
@@ -13,5 +13,5 @@ type Beacon struct {
 }
 
 func (b *Beacon) add() {
-	storeBeacon(b)
+
 }

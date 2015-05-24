@@ -1,4 +1,4 @@
-package main
+package model
 
 type Beam struct {
 	Id       int
