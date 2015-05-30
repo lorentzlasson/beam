@@ -14,7 +14,8 @@
 		},
 		{
 			"ImportPath": "git.eclipse.org/gitroot/paho/org.eclipse.paho.mqtt.golang.git",
-			"Rev": "3e58ec10bf2da9ef3fc639d12a0eb2e3596c2df7"
+			"Comment": "v0.9.1-8-g1d65364",
+			"Rev": "1d6536402dac4b2528bc23f08ecc318c295c320a"
 		},
 		{
 			"ImportPath": "github.com/Pallinder/go-randomdata",
