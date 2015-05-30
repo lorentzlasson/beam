@@ -26,6 +26,8 @@ func loadCredentials() {
 		}
 
 	} else {
+		out, _ := json.Marshal(appEnv)
+		fmt.Println("appEnv: ", string(out))
 		services.VCAP_SERVICES = appEnv.Services
 	}
 
