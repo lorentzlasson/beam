@@ -7,6 +7,7 @@ import (
 	"github.com/lorentzlasson/beam/redpanda/model"
 	"github.com/lorentzlasson/beam/redpanda/util/vcapservices"
 	"log"
+	"time"
 )
 
 var client *mqtt.Client
@@ -27,11 +28,16 @@ func startSubscriptions() {
 	client = mqtt.NewClient(opts)
 
 	token := client.Connect()
-	token.Wait()
-	token = client.Subscribe("iot-2/type/app/id/+/evt/new_beam/fmt/json", 0, messageReceived)
-	token.Wait()
+	if complete := token.WaitTimeout(3 * time.Second); !complete || token.Error() != nil {
+		log.Println("Could not connect to broker")
+	}
 
-	// log.Println("Connected to mqtt broker")
+	topic := "iot-2/type/app/id/+/evt/new_beam/fmt/json"
+	token = client.Subscribe(topic, 0, messageReceived)
+
+	if complete := token.WaitTimeout(3 * time.Second); !complete || token.Error() != nil {
+		log.Printf("Could not subscribe to topic \"%s\"", topic)
+	}
 }
 
 var messageReceived mqtt.MessageHandler = func(client *mqtt.Client, msg mqtt.Message) {
